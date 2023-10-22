@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "loadash": "^1.0.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.10.0"
   }
 }
