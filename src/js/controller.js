@@ -3,7 +3,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 const recipeContainer = document.querySelector('.recipe');
-
+const resultsList = document.querySelector('.results');
+const searchForm = document.querySelector('.search');
 const timeout = function (s) {
   return new Promise(function (_, reject) {
     setTimeout(function () {
@@ -65,7 +66,10 @@ const getRecipe = async function (recipeId) {
   }
 };
 
-const renderRecipe = async function (id = '5ed6604591c37cdc054bc886') {
+const renderRecipe = async function (e) {
+  // const id = e.newURL.split('#')[1];
+  const id = window.location.hash.slice(1);
+  if (!id) return;
   const recipe = await getRecipe(id);
 
   renderSpinner(recipeContainer);
@@ -177,8 +181,68 @@ const renderRecipe = async function (id = '5ed6604591c37cdc054bc886') {
   recipeContainer.insertAdjacentHTML('afterbegin', markup);
 };
 
-renderRecipe();
+const renderSearchResults = async function (query) {
+  renderSpinner(resultsList);
+  const recipes = await getRecipes(query);
+  resultsList.innerHTML = '';
+  if (!recipes)
+    resultsList.innerHTML = `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>No recipes found for your query. Please try again!</p>
+          </div>`;
+  else
+    recipes.forEach(recipe => {
+      resultsList.insertAdjacentHTML(
+        'beforeend',
+        `<li class="preview">
+            <a class="preview__link" href="#${recipe.id}">
+              <figure class="preview__fig">
+                <img src="${recipe.image_url}" alt="Test" />
+              </figure>
+              <div class="preview__data">
+                <h4 class="preview__title">${recipe.title}</h4>
+                <p class="preview__publisher">${recipe.publisher}</p>
+              </div>
+            </a>
+          </li>`
+      );
+    });
+};
+// renderSearchResults('burger');
+// renderRecipe();
 // https://forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////
 // renderRecipe();
+
+// Event handlers
+
+// user search for a recipe
+searchForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const query = searchForm.querySelector('.search__field').value;
+  if (!query) return;
+  renderSearchResults(query);
+});
+
+// user clicks on a recipe
+// Method 1
+// resultsList.addEventListener('hashchange', function (e) {
+//   const clicked = e.target.closest('.preview__link');
+//   if (!clicked) return;
+//   document
+//     .querySelector('.preview__link--active')
+//     ?.classList.remove('preview__link--active');
+
+//   clicked.classList.add('preview__link--active');
+//   const recipeId = clicked.href.split('#')[1];
+//   renderRecipe(recipeId);
+// });
+// Method 2
+['load', 'hashchange'].forEach(pageEvent =>
+  window.addEventListener(pageEvent, renderRecipe)
+);
