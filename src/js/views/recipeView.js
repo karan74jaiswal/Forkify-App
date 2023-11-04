@@ -23,6 +23,15 @@ class RecipeView {
   }
 
   #generateMarkup() {
+    if (!Object.entries(this.#recipe).length)
+      return `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>No recipes found for your query. Please try again!</p>
+          </div>`;
     return `<figure class="recipe__fig">
           <img src="${this.#recipe.image}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">

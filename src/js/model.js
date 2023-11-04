@@ -1,19 +1,31 @@
+import { BASE_URL } from './config';
+import { getJSON } from './helper';
+import 'regenerator-runtime/runtime';
 const state = {
   recipe: {},
-  search: {},
+  search: [],
   bookmarks: [],
+  currentPage: 1,
 };
-
+const getRecipes = async function (query) {
+  try {
+    const {
+      data: { recipes },
+    } = await getJSON(`${BASE_URL}?search=${query}`);
+    if (recipes?.length === 0) {
+      state.search = recipes;
+      throw new Error('No recipes found for your query! Please try again :)');
+    }
+    state.search = recipes;
+  } catch (err) {
+    console.warn(err);
+  }
+};
 const loadRecipe = async function (recipeId) {
   try {
-    const res = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${recipeId}`
-    );
-    // console.log(res);
-    if (!res.ok) throw new Error('Recipe not found :(');
-    let {
+    const {
       data: { recipe },
-    } = await res.json();
+    } = await getJSON(`${BASE_URL}/${recipeId}`, 'Recipe not found :(');
     state.recipe = {
       id: recipe.id,
       title: recipe.title,
@@ -24,9 +36,8 @@ const loadRecipe = async function (recipeId) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
-    // return recipe;
   } catch (err) {
     console.warn(err);
   }
 };
-export { state, loadRecipe };
+export { state, loadRecipe, getRecipes };

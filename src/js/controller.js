@@ -1,17 +1,10 @@
 import icons from 'url:../img/icons.svg'; // Parcel 2
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { state, loadRecipe } from './model';
+import { state, loadRecipe, getRecipes } from './model';
 import recipeView from './views/recipeView';
 const resultsList = document.querySelector('.results');
 const searchForm = document.querySelector('.search');
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
 
 const renderSpinner = function (parentEl) {
   const markup = `<div class="spinner">
@@ -22,22 +15,22 @@ const renderSpinner = function (parentEl) {
   parentEl.innerHTML = '';
   parentEl.insertAdjacentHTML('afterbegin', markup);
 };
-const getRecipes = async function (query) {
-  try {
-    const res = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes?search=${query}`
-    );
-    if (!res.ok) throw new Error(`${res.status}`);
-    const {
-      data: { recipes },
-    } = await res.json();
-    if (recipes.length === 0)
-      throw new Error('No recipes found for your query! Please try again :)');
-    else return recipes;
-  } catch (err) {
-    console.warn(err);
-  }
-};
+// const getRecipes = async function (query) {
+//   try {
+//     const res = await fetch(
+//       `https://forkify-api.herokuapp.com/api/v2/recipes?search=${query}`
+//     );
+//     if (!res.ok) throw new Error(`${res.status}`);
+//     const {
+//       data: { recipes },
+//     } = await res.json();
+//     if (recipes.length === 0)
+//       throw new Error('No recipes found for your query! Please try again :)');
+//     else return recipes;
+//   } catch (err) {
+//     console.warn(err);
+//   }
+// };
 
 const controlRecipes = async function (e) {
   // const id = e.newURL.split('#')[1];
@@ -51,8 +44,9 @@ const controlRecipes = async function (e) {
 
 const renderSearchResults = async function (query) {
   renderSpinner(resultsList);
-  const recipes = await getRecipes(query);
+  await getRecipes(query);
   resultsList.innerHTML = '';
+  const recipes = state.search;
   if (!recipes)
     resultsList.innerHTML = `<div class="error">
             <div>
@@ -92,7 +86,7 @@ const renderSearchResults = async function (query) {
 // user search for a recipe
 searchForm.addEventListener('submit', function (e) {
   e.preventDefault();
-  const query = searchForm.querySelector('.search__field').value;
+  const query = this.querySelector('.search__field').value;
   if (!query) return;
   renderSearchResults(query);
 });
