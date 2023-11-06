@@ -3,38 +3,16 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { state, loadRecipe, getRecipes } from './model';
 import recipeView from './views/recipeView';
-const resultsList = document.querySelector('.results');
+import searchView from './views/searchView';
+import searchResultsView from './views/searchResultsView';
 const searchForm = document.querySelector('.search');
 
-const renderSpinner = function (parentEl) {
-  const markup = `<div class="spinner">
-          <svg>
-            <use href="${icons}#icon-loader"></use>
-          </svg>
-        </div>`;
-  parentEl.innerHTML = '';
-  parentEl.insertAdjacentHTML('afterbegin', markup);
-};
-// const getRecipes = async function (query) {
-//   try {
-//     const res = await fetch(
-//       `https://forkify-api.herokuapp.com/api/v2/recipes?search=${query}`
-//     );
-//     if (!res.ok) throw new Error(`${res.status}`);
-//     const {
-//       data: { recipes },
-//     } = await res.json();
-//     if (recipes.length === 0)
-//       throw new Error('No recipes found for your query! Please try again :)');
-//     else return recipes;
-//   } catch (err) {
-//     console.warn(err);
-//   }
-// };
+if (module.hot) {
+  module.hot.accept();
+}
 
 const controlRecipes = async function (e) {
   try {
-    // const id = e.newURL.split('#')[1];
     const id = window.location.hash.slice(1);
     if (!id) return;
     await loadRecipe(id);
@@ -42,54 +20,37 @@ const controlRecipes = async function (e) {
     recipeView.renderSpinner();
     recipeView.render(recipe);
   } catch (err) {
-    recipeView.renderErrorMsg();
+    recipeView.renderErrorMessage();
+  }
+};
+
+const controlSearchResults = async function () {
+  try {
+    const query = searchView.getQuery();
+    if (!query) return;
+    searchResultsView.renderSpinner();
+    await getRecipes(query);
+    searchResultsView.render(state.search.results);
+    // const recipes = state.search.results.filter(
+    //   (_, index) =>
+    //     index >= state.currentPage - 1 && index < state.currentPage + 9
+    // );
+  } catch (err) {
+    searchResultsView.renderErrorMessage();
   }
 };
 
 // Subscribing The controlRecipes Function(Subscriber)  to the recipeView addHandlerRender(Publisher)
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  searchView.addHandlerSearch(controlSearchResults);
 };
-const renderSearchResults = async function (query) {
-  renderSpinner(resultsList);
-  await getRecipes(query);
-  resultsList.innerHTML = '';
-  const recipes = state.search;
 
-  if (!recipes.length)
-    resultsList.innerHTML = `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>No recipes found for your query. Please try again!</p>
-          </div>`;
-  else
-    recipes.forEach(recipe => {
-      resultsList.insertAdjacentHTML(
-        'beforeend',
-        `<li class="preview">
-            <a class="preview__link" href="#${recipe.id}">
-              <figure class="preview__fig">
-                <img src="${recipe.image_url}" alt="Test" />
-              </figure>
-              <div class="preview__data">
-                <h4 class="preview__title">${recipe.title}</h4>
-                <p class="preview__publisher">${recipe.publisher}</p>
-              </div>
-            </a>
-          </li>`
-      );
-    });
-};
-// renderSearchResults('burger');
-// renderRecipe();
 // https://forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////
-// renderRecipe();
 init();
+
 // Event handlers
 
 // user search for a recipe
@@ -97,19 +58,5 @@ searchForm.addEventListener('submit', function (e) {
   e.preventDefault();
   const query = this.querySelector('.search__field').value;
   if (!query) return;
-  renderSearchResults(query);
+  controlSearchResults(query);
 });
-
-// user clicks on a recipe
-// Method 1
-// resultsList.addEventListener('hashchange', function (e) {
-//   const clicked = e.target.closest('.preview__link');
-//   if (!clicked) return;
-//   document
-//     .querySelector('.preview__link--active')
-//     ?.classList.remove('preview__link--active');
-
-//   clicked.classList.add('preview__link--active');
-//   const recipeId = clicked.href.split('#')[1];
-//   renderRecipe(recipeId);
-// });
