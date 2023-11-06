@@ -1,5 +1,4 @@
 // This file contains all the helper functions which are generally used in all over MVC architecture script files
-import 'regenerator-runtime/runtime';
 import { TIMEOUT_SECONDS } from './config';
 
 // Function for Throwing an error when The reponse got from API was not expected OK otherwise it will give response body as json.

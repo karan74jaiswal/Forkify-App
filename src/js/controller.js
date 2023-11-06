@@ -33,21 +33,30 @@ const renderSpinner = function (parentEl) {
 // };
 
 const controlRecipes = async function (e) {
-  // const id = e.newURL.split('#')[1];
-  const id = window.location.hash.slice(1);
-  if (!id) return;
-  await loadRecipe(id);
-  const { recipe } = state;
-  recipeView.renderSpinner();
-  recipeView.render(recipe);
+  try {
+    // const id = e.newURL.split('#')[1];
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    await loadRecipe(id);
+    const { recipe } = state;
+    recipeView.renderSpinner();
+    recipeView.render(recipe);
+  } catch (err) {
+    recipeView.renderErrorMsg();
+  }
 };
 
+// Subscribing The controlRecipes Function(Subscriber)  to the recipeView addHandlerRender(Publisher)
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+};
 const renderSearchResults = async function (query) {
   renderSpinner(resultsList);
   await getRecipes(query);
   resultsList.innerHTML = '';
   const recipes = state.search;
-  if (!recipes)
+
+  if (!recipes.length)
     resultsList.innerHTML = `<div class="error">
             <div>
               <svg>
@@ -80,7 +89,7 @@ const renderSearchResults = async function (query) {
 
 ///////////////////////////////////////
 // renderRecipe();
-
+init();
 // Event handlers
 
 // user search for a recipe
@@ -104,7 +113,3 @@ searchForm.addEventListener('submit', function (e) {
 //   const recipeId = clicked.href.split('#')[1];
 //   renderRecipe(recipeId);
 // });
-// Method 2
-['load', 'hashchange'].forEach(pageEvent =>
-  window.addEventListener(pageEvent, controlRecipes)
-);

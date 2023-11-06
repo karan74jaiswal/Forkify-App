@@ -4,15 +4,41 @@ import fracty from 'fracty';
 class RecipeView {
   #recipe;
   #parentElement = document.querySelector('.recipe');
-
+  #errorMsg = 'We could not find that recipe. Please try again';
+  #successMsg = `Recipe Found`;
   renderSpinner() {
     const markup = `<div class="spinner">
           <svg>
             <use href="${icons}#icon-loader"></use>
           </svg>
         </div>`;
-    this.#parentElement.innerHTML = '';
+    this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  renderErrorMsg(errorMsg = this.#errorMsg) {
+    const markup = `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${errorMsg}</p>
+          </div>`;
+    this.#clear();
+    this.#parentElement.innerHTML = markup;
+  }
+  renderSuccessMsg(message = this.#successMsg) {
+    const markup = `<div class="message">
+            <div>
+              <svg>
+                <use href="${icons}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>`;
+    this.#clear();
+    this.#parentElement.innerHTML = markup;
   }
 
   render(recipe) {
@@ -22,16 +48,12 @@ class RecipeView {
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  addHandlerRender(handler) {
+    ['load', 'hashchange'].forEach(pageEvent =>
+      window.addEventListener(pageEvent, handler)
+    );
+  }
   #generateMarkup() {
-    if (!Object.entries(this.#recipe).length)
-      return `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>No recipes found for your query. Please try again!</p>
-          </div>`;
     return `<figure class="recipe__fig">
           <img src="${this.#recipe.image}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">

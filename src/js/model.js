@@ -1,6 +1,5 @@
 import { BASE_URL } from './config';
 import { getJSON } from './helper';
-import 'regenerator-runtime/runtime';
 const state = {
   recipe: {},
   search: [],
@@ -18,7 +17,8 @@ const getRecipes = async function (query) {
     }
     state.search = recipes;
   } catch (err) {
-    console.warn(err);
+    console.log(err);
+    // throw err;
   }
 };
 const loadRecipe = async function (recipeId) {
@@ -37,7 +37,7 @@ const loadRecipe = async function (recipeId) {
       ingredients: recipe.ingredients,
     };
   } catch (err) {
-    console.warn(err);
+    throw err;
   }
 };
-export { state, loadRecipe, getRecipes };
+export { state, getRecipes, loadRecipe };
