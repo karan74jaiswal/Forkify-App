@@ -2,7 +2,7 @@ import icons from 'url:../../img/icons.svg'; // Parcel 2
 
 export default class View {
   _data;
-  _parentElement = document.querySelector('.recipe');
+  // _parentElement = document.querySelector('.recipe');
   _errorMsg = 'We could not find that recipe. Please try again';
   _successMsg = `Recipe Found`;
 

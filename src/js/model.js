@@ -5,9 +5,10 @@ const state = {
   search: {
     query: '',
     results: [],
+    currentPage: 1,
+    resultsPerPage: 10,
   },
   bookmarks: [],
-  currentPage: 1,
 };
 const getRecipes = async function (query) {
   try {
@@ -50,4 +51,13 @@ const loadRecipe = async function (recipeId) {
     throw err;
   }
 };
-export { state, getRecipes, loadRecipe };
+
+const resultsLimit = function () {
+  const startingIndex =
+    (state.search.currentPage - 1) * state.search.resultsPerPage;
+  const endingIndex = startingIndex + 9;
+  return state.search.results.filter(
+    (_, index) => index >= startingIndex && index <= endingIndex
+  );
+};
+export { state, getRecipes, loadRecipe, resultsLimit };
