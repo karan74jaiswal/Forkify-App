@@ -1,4 +1,4 @@
-import { BASE_URL } from './config';
+import { BASE_URL, RESULTS_PER_PAGE } from './config';
 import { getJSON } from './helper';
 const state = {
   recipe: {},
@@ -6,7 +6,7 @@ const state = {
     query: '',
     results: [],
     currentPage: 1,
-    resultsPerPage: 10,
+    resultsPerPage: RESULTS_PER_PAGE,
   },
   bookmarks: [],
 };
