@@ -60,4 +60,12 @@ const resultsLimit = function () {
     (_, index) => index >= startingIndex && index <= endingIndex
   );
 };
-export { state, getRecipes, loadRecipe, resultsLimit };
+
+const updateRecipeServings = function (newServings) {
+  state.recipe.ingredients.forEach(ingredient => {
+    ingredient.quantity =
+      (ingredient.quantity * newServings) / state.recipe.servings;
+  });
+  state.recipe.servings = newServings;
+};
+export { state, getRecipes, loadRecipe, resultsLimit, updateRecipeServings };
