@@ -15,7 +15,7 @@ import searchView from './views/searchView';
 import searchResultsView from './views/searchResultsView';
 import pageinationView from './views/pageinationView';
 import bookmarksView from './views/bookmarksView';
-const searchForm = document.querySelector('.search');
+import addRecipeView from './views/addRecipeView';
 
 if (module.hot) {
   module.hot.accept();
@@ -97,13 +97,3 @@ const init = function () {
 
 ///////////////////////////////////////
 init();
-
-// Event handlers
-
-// user search for a recipe
-searchForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-  const query = this.querySelector('.search__field').value;
-  if (!query) return;
-  controlSearchResults(query);
-});
