@@ -55,9 +55,11 @@ class RecipeView extends View {
 
           <div class="recipe__user-generated">
           </div>
-          <button class="btn--round">
+          <button class="btn--round btn--bookmark">
             <svg class="">
-              <use href="${icons}#icon-bookmark-fill"></use>
+              <use href="${icons}#icon-bookmark${
+      this._data.bookmarked ? '-fill' : ''
+    }"></use>
             </svg>
           </button>
         </div>
@@ -112,10 +114,12 @@ class RecipeView extends View {
       ?.addEventListener('click', handler);
   }
 
-  updateServings() {
-    this._parentElement.querySelector(
-      '.recipe__info-data--people'
-    ).textContent = this._data.servings;
+  addBookmarkHandler(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const clicked = e.target.closest('.btn--bookmark');
+      if (!clicked) return;
+      handler();
+    });
   }
 }
 

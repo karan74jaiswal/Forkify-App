@@ -44,14 +44,16 @@ export default class View {
     this._parentElement.innerHTML = '';
   }
 
-  render(data) {
+  render(data, render = true) {
     try {
+      if (Array.isArray(data) && data.length === 0)
+        throw new Error('no recipes found');
       this._data = data;
       const markup = this._generateMarkup();
+      if (!render) return markup;
       this._clear();
       this._parentElement.insertAdjacentHTML('afterbegin', markup);
     } catch (err) {
-      console.log(err);
       this.renderErrorMessage();
     }
   }
