@@ -23,8 +23,8 @@ if (module.hot) {
 const controlBookmarks = function () {
   if (!state.recipe.bookmarked) addBookmarks(state.recipe);
   else removeBookmarks(state.recipe.id);
-  recipeView.update(state.recipe);
   bookmarksView.render(state.bookmarks);
+  recipeView.update(state.recipe);
 };
 
 const controlBookmarkRender = function () {
