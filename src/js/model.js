@@ -90,6 +90,8 @@ const removeBookmarks = function (id) {
   persistBookmarks();
 };
 
+const postNewRecipe = async function () {};
+
 const init = function () {
   storage = localStorage.getItem('bookmarks');
   if (storage) state.bookmarks = JSON.parse(storage);

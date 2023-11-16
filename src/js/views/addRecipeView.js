@@ -7,6 +7,7 @@ class AddRecipeView extends View {
   _overlay = document.querySelector('.overlay');
   _openModalBtn = document.querySelector('.nav__btn--add-recipe');
   _closeModalBtn = document.querySelector('.btn--close-modal');
+  _uploadRecipeBtn = document.querySelector('.upload__btn');
 
   constructor() {
     super();
@@ -22,10 +23,15 @@ class AddRecipeView extends View {
       el.addEventListener('click', this.toogleModal.bind(this))
     );
   }
-  //   openAddRecipeModalHandler() {
-  //     this._parentElement.classList.remove('hidden');
-  //     document.querySelector('.overlay').remove('hidden');
-  //   }
+
+  recipeUploadHandler(handler) {
+    this._parentElement.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const dataArray = [...new FormData(this)];
+      const data = Object.fromEntries(dataArray);
+      handler(data);
+    });
+  }
 }
 
 export default new AddRecipeView();

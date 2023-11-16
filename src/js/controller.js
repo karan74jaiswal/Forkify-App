@@ -84,6 +84,11 @@ const updateResultsWithPage = function (e) {
   pageinationView.render(state.search);
 };
 
+const getUserGeneratedRecipeData = function (newRecipe) {
+  console.log(newRecipe);
+  addRecipeView.toogleModal();
+};
+
 // Subscribing The controlRecipes Function(Subscriber)  to the recipeView addHandlerRender(Publisher)
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
@@ -91,6 +96,7 @@ const init = function () {
   pageinationView.addUpdationHandler(updateResultsWithPage);
   recipeView.addBookmarkHandler(controlBookmarks);
   bookmarksView.addHandlerRender(controlBookmarkRender);
+  addRecipeView.recipeUploadHandler(getUserGeneratedRecipeData);
 };
 
 // https://forkify-api.herokuapp.com/v2
