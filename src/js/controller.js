@@ -9,6 +9,7 @@ import {
   updateRecipeServings,
   addBookmarks,
   removeBookmarks,
+  uploadRecipe,
 } from './model';
 import recipeView from './views/recipeView';
 import searchView from './views/searchView';
@@ -84,8 +85,8 @@ const updateResultsWithPage = function (e) {
   pageinationView.render(state.search);
 };
 
-const getUserGeneratedRecipeData = function (newRecipe) {
-  console.log(newRecipe);
+const getUserGeneratedRecipeData = async function (newRecipe) {
+  console.log(await uploadRecipe(newRecipe));
   addRecipeView.toogleModal();
 };
 

@@ -90,7 +90,36 @@ const removeBookmarks = function (id) {
   persistBookmarks();
 };
 
-const postNewRecipe = async function () {};
+const uploadRecipe = async function (newRecipe) {
+  console.log(newRecipe);
+  const ingredients = Object.entries(newRecipe)
+    .filter(entry => {
+      if (entry[0].includes('ingredient') && entry[1]) return entry;
+    })
+    .map(ingredient => {
+      const [quantity, unit = '', item = ''] = ingredient[1]
+        .split(',')
+        .map(ing => ing.trim());
+      return {
+        quantity: +quantity || null,
+        unit,
+        item,
+      };
+    });
+
+  console.log(ingredients);
+  const recipe = {
+    title: newRecipe.title,
+    image_url: newRecipe.image,
+    servings: +newRecipe.servings,
+    source_url: newRecipe.sourceUrl,
+    publisher: newRecipe.publisher,
+    cooking_time: +newRecipe.cookingTime,
+    ingredients,
+  };
+
+  return recipe;
+};
 
 const init = function () {
   storage = localStorage.getItem('bookmarks');
@@ -106,4 +135,5 @@ export {
   updateRecipeServings,
   addBookmarks,
   removeBookmarks,
+  uploadRecipe,
 };
