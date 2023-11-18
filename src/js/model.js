@@ -143,7 +143,7 @@ const uploadRecipe = async function (newRecipe) {
 };
 
 const init = function () {
-  storage = localStorage.getItem('bookmarks');
+  const storage = localStorage.getItem('bookmarks');
   if (storage) state.bookmarks = JSON.parse(storage);
 };
 
