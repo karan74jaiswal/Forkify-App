@@ -17,6 +17,7 @@ import searchResultsView from './views/searchResultsView';
 import pageinationView from './views/pageinationView';
 import bookmarksView from './views/bookmarksView';
 import addRecipeView from './views/addRecipeView';
+import { MODAL_CLOSE_SECONDS } from './config';
 
 if (module.hot) {
   module.hot.accept();
@@ -86,8 +87,24 @@ const updateResultsWithPage = function (e) {
 };
 
 const getUserGeneratedRecipeData = async function (newRecipe) {
-  console.log(await uploadRecipe(newRecipe));
-  addRecipeView.toogleModal();
+  try {
+    addRecipeView.renderSpinner();
+    await uploadRecipe(newRecipe);
+    addBookmarks(state.recipe);
+    bookmarksView.render(state.bookmarks);
+    recipeView.render(state.recipe);
+    recipeView.addServingsUpdationHandler(controlServings);
+    // console.log(state.recipe);
+    addRecipeView.renderSuccessMsg('Recipe was Uploaded Successfully :)');
+    setTimeout(() => {
+      addRecipeView.closeModal();
+      addRecipeView.resetForm();
+      addRecipeView.recipeUploadHandler(getUserGeneratedRecipeData);
+    }, MODAL_CLOSE_SECONDS * 1000);
+  } catch (err) {
+    console.log(err);
+    addRecipeView.renderErrorMessage('Something went wrong, Please try again');
+  }
 };
 
 // Subscribing The controlRecipes Function(Subscriber)  to the recipeView addHandlerRender(Publisher)

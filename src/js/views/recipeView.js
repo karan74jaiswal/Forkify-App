@@ -52,9 +52,8 @@ class RecipeView extends View {
               </button>
             </div>
           </div>
-
-          <div class="recipe__user-generated">
-          </div>
+          ${this._data.key ? this.userGeneratedMarkup : ''}
+          
           <button class="btn--round btn--bookmark">
             <svg class="">
               <use href="${icons}#icon-bookmark${

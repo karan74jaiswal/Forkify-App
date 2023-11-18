@@ -1,5 +1,5 @@
-import { BASE_URL, RESULTS_PER_PAGE } from './config';
-import { getJSON } from './helper';
+import { BASE_URL, RESULTS_PER_PAGE, API_KEY } from './config';
+import { getJSON, sendJSON } from './helper';
 const state = {
   recipe: {},
   search: {
@@ -36,22 +36,28 @@ const getRecipes = async function (query) {
     throw err;
   }
 };
+
+const createRecipeObject = recipe => {
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    sourceUrl: recipe.source_url,
+    image: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    bookmarked: state.bookmarks.some(bookmark => bookmark.id === recipe.id),
+    ...(recipe.key && { key: recipe.key }),
+  };
+};
 const loadRecipe = async function (recipeId) {
   try {
     const {
       data: { recipe },
     } = await getJSON(`${BASE_URL}/${recipeId}`, 'Recipe not found :(');
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-      bookmarked: state.bookmarks.some(bookmark => bookmark.id === recipeId),
-    };
+    state.recipe = createRecipeObject(recipe);
+    // console.log(state.recipe);
   } catch (err) {
     throw err;
   }
@@ -91,34 +97,44 @@ const removeBookmarks = function (id) {
 };
 
 const uploadRecipe = async function (newRecipe) {
-  console.log(newRecipe);
-  const ingredients = Object.entries(newRecipe)
-    .filter(entry => {
-      if (entry[0].includes('ingredient') && entry[1]) return entry;
-    })
-    .map(ingredient => {
-      const [quantity, unit = '', item = ''] = ingredient[1]
-        .split(',')
-        .map(ing => ing.trim());
-      return {
-        quantity: +quantity || null,
-        unit,
-        item,
-      };
-    });
+  try {
+    // console.log(newRecipe);
+    const ingredients = Object.entries(newRecipe)
+      .filter(entry => {
+        if (entry[0].includes('ingredient') && entry[1]) return entry;
+      })
+      .map(ingredient => {
+        const [quantity, unit = '', description = ''] = ingredient[1]
+          .split(',')
+          .map(ing => ing.trim());
+        return {
+          quantity: +quantity || null,
+          unit,
+          description,
+        };
+      });
 
-  console.log(ingredients);
-  const recipe = {
-    title: newRecipe.title,
-    image_url: newRecipe.image,
-    servings: +newRecipe.servings,
-    source_url: newRecipe.sourceUrl,
-    publisher: newRecipe.publisher,
-    cooking_time: +newRecipe.cookingTime,
-    ingredients,
-  };
+    // console.log(ingredients);
+    const recipe = {
+      title: newRecipe.title,
+      image_url: newRecipe.image,
+      servings: +newRecipe.servings,
+      source_url: newRecipe.sourceUrl,
+      publisher: newRecipe.publisher,
+      cooking_time: +newRecipe.cookingTime,
+      ingredients,
+    };
 
-  return recipe;
+    const { data } = await sendJSON(
+      `${BASE_URL}?key=${API_KEY}`,
+      recipe,
+      'Cannot Post, Something Went Wrong'
+    );
+    // console.log('Data', data.recipe);
+    state.recipe = createRecipeObject(data.recipe);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const init = function () {

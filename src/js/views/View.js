@@ -5,15 +5,16 @@ export default class View {
   // _parentElement = document.querySelector('.recipe');
   _errorMsg = 'We could not find that recipe. Please try again';
   _successMsg = `Recipe Found`;
+  userGeneratedMarkup = `<div class="recipe__user-generated"><svg><use href="${icons}#icon-user"></use></svg></div>`;
 
-  renderErrorMessage() {
+  renderErrorMessage(errorMsg = this._errorMsg) {
     this._parentElement.innerHTML = `<div class="error">
             <div>
               <svg>
                 <use href="${icons}#icon-alert-triangle"></use>
               </svg>
             </div>
-            <p>No recipes found for your query. Please try again!</p>
+            <p>${errorMsg}</p>
           </div>`;
   }
 
