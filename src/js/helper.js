@@ -12,6 +12,7 @@ export const timeout = function (s) {
 
 export const AJAX = async function (url, uploadData = undefined, errorMsg) {
   try {
+    console.log(uploadData);
     const res = await Promise.race([
       fetch(
         url,

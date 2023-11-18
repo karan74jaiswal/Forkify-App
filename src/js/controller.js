@@ -97,6 +97,7 @@ const getUserGeneratedRecipeData = async function (newRecipe) {
     recipeView.addServingsUpdationHandler(controlServings);
     // console.log(state.recipe);
     addRecipeView.renderSuccessMsg('Recipe was Uploaded Successfully :)');
+
     setTimeout(() => {
       addRecipeView.closeModal();
       addRecipeView.resetForm();
