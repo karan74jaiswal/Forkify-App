@@ -17,7 +17,10 @@ export default class View {
             <p>${errorMsg}</p>
           </div>`;
   }
-
+  /**
+   *
+   * @param {string} message
+   */
   renderSuccessMsg(message = this._successMsg) {
     const markup = `<div class="message">
             <div>
@@ -31,6 +34,9 @@ export default class View {
     this._parentElement.innerHTML = markup;
   }
 
+  /**
+   *
+   */
   renderSpinner() {
     const markup = `<div class="spinner">
           <svg>
@@ -44,6 +50,16 @@ export default class View {
   _clear() {
     this._parentElement.innerHTML = '';
   }
+
+  /**
+   * Render the recieved object to the DOM
+   * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
+   * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM
+   * @returns {undefined | string} A markup string is returned if render=false
+   * @this {Object} View instance
+   * @author Kartikey Jaiswal
+   * @todo Finish Implementation
+   */
 
   render(data, render = true) {
     try {
@@ -59,6 +75,11 @@ export default class View {
     }
   }
 
+  /**
+   * Takes the object and update the DOM with updated parts only without rerendering whole DOM
+   * @param {Object | Object[]} data The new data to be rendered
+   * @returns
+   */
   update(data) {
     if (!data) return this.renderErrorMessage();
     this._data = data;

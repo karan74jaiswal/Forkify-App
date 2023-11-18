@@ -10,9 +10,15 @@ export const timeout = function (s) {
   });
 };
 
+/**
+ *
+ * @param {*} url
+ * @param {*} uploadData
+ * @param {*} errorMsg
+ * @returns
+ */
 export const AJAX = async function (url, uploadData = undefined, errorMsg) {
   try {
-    console.log(uploadData);
     const res = await Promise.race([
       fetch(
         url,
