@@ -1,5 +1,5 @@
 import { BASE_URL, RESULTS_PER_PAGE, API_KEY } from './config';
-import { getJSON, sendJSON } from './helper';
+import { AJAX } from './helper';
 const state = {
   recipe: {},
   search: {
@@ -19,7 +19,7 @@ const getRecipes = async function (query) {
     state.search.query = query;
     const {
       data: { recipes },
-    } = await getJSON(`${BASE_URL}?search=${query}`);
+    } = await AJAX(`${BASE_URL}?search=${query}&key=${API_KEY}`);
     if (!recipes.length)
       throw new Error('No recipes found for your query! Please try again :)');
     const searchResults = recipes.map(recipe => {
@@ -28,6 +28,7 @@ const getRecipes = async function (query) {
         image: recipe.image_url,
         title: recipe.title,
         publisher: recipe.publisher,
+        ...(recipe.key && { key: recipe.key }),
       };
     });
     state.search.results = searchResults;
@@ -55,7 +56,11 @@ const loadRecipe = async function (recipeId) {
   try {
     const {
       data: { recipe },
-    } = await getJSON(`${BASE_URL}/${recipeId}`, 'Recipe not found :(');
+    } = await AJAX(
+      `${BASE_URL}/${recipeId}?key=${API_KEY}`,
+      undefined,
+      'Recipe not found :('
+    );
     state.recipe = createRecipeObject(recipe);
     // console.log(state.recipe);
   } catch (err) {
@@ -125,7 +130,7 @@ const uploadRecipe = async function (newRecipe) {
       ingredients,
     };
 
-    const { data } = await sendJSON(
+    const { data } = await AJAX(
       `${BASE_URL}?key=${API_KEY}`,
       recipe,
       'Cannot Post, Something Went Wrong'

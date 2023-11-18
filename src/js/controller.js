@@ -90,6 +90,7 @@ const getUserGeneratedRecipeData = async function (newRecipe) {
   try {
     addRecipeView.renderSpinner();
     await uploadRecipe(newRecipe);
+    window.history.pushState(null, '', `#${state.recipe.id}`);
     addBookmarks(state.recipe);
     bookmarksView.render(state.bookmarks);
     recipeView.render(state.recipe);
